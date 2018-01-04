@@ -1,3 +1,5 @@
+package com.amazonaws.sample;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Region;

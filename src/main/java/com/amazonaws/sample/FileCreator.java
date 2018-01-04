@@ -1,3 +1,5 @@
+package com.amazonaws.sample;
+
 import java.io.File;
 import java.io.IOException;
 

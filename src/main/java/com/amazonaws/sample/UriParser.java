@@ -1,3 +1,5 @@
+package com.amazonaws.sample;
+
 import sun.nio.cs.ThreadLocalCoders;
 
 import java.nio.ByteBuffer;

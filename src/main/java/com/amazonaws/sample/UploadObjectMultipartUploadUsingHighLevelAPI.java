@@ -1,3 +1,5 @@
+package com.amazonaws.sample;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.transfer.TransferManager;
