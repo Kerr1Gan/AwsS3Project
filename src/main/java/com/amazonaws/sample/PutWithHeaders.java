@@ -6,10 +6,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 
@@ -45,5 +42,12 @@ public class PutWithHeaders {
         }
         S3Object obj = s3.getObject(new GetObjectRequest("firststorage0001", "key01"));
         UriParser.decode(obj.getObjectMetadata().getUserMetadata().get("header-test"));
+        System.out.println("Listing objects");
+        ObjectListing objectListing = s3.listObjects(new ListObjectsRequest()
+                .withBucketName("firststorage0001"));
+        for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+            System.out.println(" - " + objectSummary.getKey() + "  " +
+                    "(size = " + objectSummary.getSize() + ")");
+        }
     }
 }

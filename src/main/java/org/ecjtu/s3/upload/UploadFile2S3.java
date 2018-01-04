@@ -62,17 +62,16 @@ public class UploadFile2S3 {
             // TransferManager processes all transfers asynchronously,
             // so this call will return immediately.
             // 上传失败可重新使用PutObjectRequest请求再次上传，上传成功的将不再重新上传，失败的则重新上传
-            PutObjectRequest request = new PutObjectRequest("firststorage0001", "key01", new File(item.getUrl()));
+            final PutObjectRequest request = new PutObjectRequest("firststorage0001", "key01", new File(item.getUrl()));
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.addUserMetadata("name", UriParser.encode(item.getName()));
             request.setMetadata(metadata);
-            final long[] num = new long[2];
+            final long[] num = new long[3];
+            num[0] = new File(item.getUrl()).length();
             request.setGeneralProgressListener(event -> {
-                if (event.getEventType() == ProgressEventType.REQUEST_CONTENT_LENGTH_EVENT) {
-                    num[0] = event.getBytes();
-                }
-                if (System.currentTimeMillis() - num[1] > 30 * 1000) {
-                    System.out.println("percent " + ((num[0] * 1.0f) / (event.getBytes() * 1.0f)) +
+                num[2] += event.getBytesTransferred();
+                if (System.currentTimeMillis() - num[1] > 5 * 1000) {
+                    System.out.println("percent " + ((num[2] * 1.0f) / (num[0] * 1.0f) * 100) + "%" +
                             " url " + item.getUrl() +
                             " transferredBytes " + event.getBytesTransferred() +
                             " totalBytes " + event.getBytes() +
