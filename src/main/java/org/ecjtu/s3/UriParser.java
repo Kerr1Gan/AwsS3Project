@@ -12,7 +12,7 @@ import java.text.Normalizer;
 
 public class UriParser {
 
-    private final static char[] hexDigits = {
+    private final static char[] sHexDigits = {
             '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
@@ -52,8 +52,8 @@ public class UriParser {
 
     private static void appendEscape(StringBuffer sb, byte b) {
         sb.append('%');
-        sb.append(hexDigits[(b >> 4) & 0x0f]);
-        sb.append(hexDigits[(b >> 0) & 0x0f]);
+        sb.append(sHexDigits[(b >> 4) & 0x0f]);
+        sb.append(sHexDigits[(b >> 0) & 0x0f]);
     }
 
     public static int decode(char c) {
