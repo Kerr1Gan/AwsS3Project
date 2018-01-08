@@ -16,7 +16,7 @@ public class Files2Json {
     private static final FilenameFilter sFilter = (dir, name) -> {
         File file = new File(dir, name);
         long length = file.length();
-        if (name.endsWith(".mp4") && length > 1024 * 1024 * 50) {
+        if (file.isDirectory() || (name.endsWith(".mp4") && length > 1024 * 1024 * 50)) {
             return true;
         }
         return false;
@@ -24,7 +24,7 @@ public class Files2Json {
 
     public static void main(String[] args) throws JSONException {
         File file = new File(Constants.RES_PATH, "files.json");
-        File uploadDir = new File("E:\\WorkTools");
+        File uploadDir = new File("I:\\迅雷下载");
         List<File> allFiles = getFiles(uploadDir, null);
 
         JSONArray array = new JSONArray();
@@ -40,6 +40,8 @@ public class Files2Json {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        file = new File(Constants.RES_PATH, "tmp");
+        file.delete();
     }
 
     public static List<File> getFiles(File f, List<File> ret) {

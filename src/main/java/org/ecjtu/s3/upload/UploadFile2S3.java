@@ -107,6 +107,7 @@ public class UploadFile2S3 {
             }
         }
         writeCache(cache, sUploadList);
+        tm.shutdownNow(true);
     }
 
     @SuppressWarnings("unchecked")

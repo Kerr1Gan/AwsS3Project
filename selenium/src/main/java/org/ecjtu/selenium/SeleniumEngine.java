@@ -1,5 +1,7 @@
 package org.ecjtu.selenium;
 
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -55,6 +57,11 @@ public class SeleniumEngine {
         return new ChromeDriver(capabilities);
     }
 
+    public ChromeDriver newDestopChromeDriver() {
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        return new ChromeDriver(capabilities);
+    }
+
     public void openNewTab(ChromeDriver webDriver, String url) {
         webDriver.executeScript("window.open('" + url + "')");
     }
@@ -62,5 +69,32 @@ public class SeleniumEngine {
     public void switchTab(ChromeDriver webDriver, int index) {
         List<String> tabs = new ArrayList<>(webDriver.getWindowHandles());
         webDriver.switchTo().window(tabs.get(index)); //switches to new tab
+    }
+
+    public void desktopClick(WebElement webElement) {
+        try {
+            webElement.click();
+            webElement.sendKeys(Keys.ENTER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mobileClick(ChromeDriver webDriver, WebElement webElement, String js) {
+//        String js = "var sub = document.getElementById(\"login\"); " + "sub.click();";
+        try {
+            webDriver.executeScript(js);
+            webElement.sendKeys(Keys.ENTER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mobileClickById(ChromeDriver webDriver, WebElement webElement, String id) {
+        mobileClick(webDriver, webElement, String.format("var target = document.getElementById('%s');target.focus();target.click();", id));
+    }
+
+    public void mobileClickByClassName(ChromeDriver webDriver, WebElement webElement, String className, int index) {
+        mobileClick(webDriver, webElement, String.format("var target = document.getElementsByClassName('%s')[%d];target.focus();target.click();", className, index));
     }
 }
