@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CrawlXKorean {
 
@@ -29,72 +31,12 @@ public class CrawlXKorean {
         }
         ChromeDriver driver = null;
         try {
-            driver = SeleniumEngine.getInstance().getChromeDriver();
-            driver.get("http://www.xkorean.cam");
-            String source = driver.getPageSource();
-            Document doc = Jsoup.parse(source);
-            Elements elements = doc.getElementsByClass("thcovering-video");
-
-//        Element ele = elements.get(1);
-//        elements.remove(0);
-            for (Element e : elements) {
-                for (int i = 0; i < e.children().size(); i++) {
-                    Element child = e.child(i);
-                    loop:
-                    for (int j = 0; j < child.children().size(); j++) {
-                        Element child2 = child.child(j);
-                        if (child2.tagName().equals("a")) {
-                            String videoUrl = child2.attr("href");
-                            if (checkIfExists(sXKoreanModels, videoUrl)) {
-                                System.out.println("videoUrl exists " + videoUrl);
-                                continue loop;
-                            }
-                            System.out.println("videoUrl " + videoUrl);
-
-                            SeleniumEngine.getInstance().openNewTab(driver, "");
-                            SeleniumEngine.getInstance().switchTab(driver, 1);
-                            driver.get(videoUrl);
-                            System.out.println("find real path start");
-                            String innerWindowUrl = driver.findElement(By.id("player")).findElement(By.tagName("iframe")).getAttribute("src");
-                            System.out.println("innerVideoUrl " + innerWindowUrl);
-                            SeleniumEngine.getInstance().openNewTab(driver, "");
-                            SeleniumEngine.getInstance().switchTab(driver, 2);
-                            driver.get(innerWindowUrl);
-                            try {
-                                SeleniumEngine.getInstance().mobileClickById(driver, driver.findElement(By.id("videooverlay")), "videooverlay");
-                            } catch (Exception e2) {
-                                e2.printStackTrace();
-                                driver.close();
-                                SeleniumEngine.getInstance().switchTab(driver, 1);
-                                driver.close();
-                                SeleniumEngine.getInstance().switchTab(driver, 0);
-                                continue loop;
-                            }
-                            System.out.println("find real path end");
-                            WebElement videoElement = driver.findElement(By.id("olvideo_html5_api"));
-                            String realUrl = videoElement.getAttribute("src");
-                            String imageUrl = driver.findElement(By.id("olvideo")).getAttribute("poster");
-                            String title = e.child(1).text();
-                            System.out.println("realUrl " + realUrl + " imageUrl " + imageUrl + " title " + title);
-                            driver.close();
-                            SeleniumEngine.getInstance().switchTab(driver, 1);
-                            driver.close();
-                            SeleniumEngine.getInstance().switchTab(driver, 0);
-                            XKoreanModel model = new XKoreanModel();
-                            model.imageUrl = imageUrl;
-                            model.innerVideoUrl = innerWindowUrl;
-                            model.realUrl = realUrl;
-                            model.title = title;
-                            model.videoUrl = videoUrl;
-                            sXKoreanModels.add(model);
-
-                            new Thread(() -> {
-                                saveCache(sXKoreanModels);
-                            }).start();
-                        }
-                    }
-                }
+            for (int i = 24; i <= 37; i++) {
+                driver = SeleniumEngine.getInstance().getChromeDriver();
+                crawl(driver, String.format("http://www.xkorean.cam/page/%d", i));
+                SeleniumEngine.getInstance().releaseChromeDriver();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,6 +46,105 @@ public class CrawlXKorean {
             driver.quit(); // 关闭驱动并退出所有窗口
         }
     }
+
+    public static void crawl(ChromeDriver driver, String url) {
+        driver.get(url);
+        String source = driver.getPageSource();
+        Document doc = Jsoup.parse(source);
+        Elements elements = doc.getElementsByClass("thcovering-video");
+        Timer timer = new Timer();
+        for (Element e : elements) {
+            System.out.println("current crawl index " + elements.indexOf(e));
+            for (int i = 0; i < e.children().size(); i++) {
+                Element child = e.child(i);
+                loop:
+                for (int j = 0; j < child.children().size(); j++) {
+                    Element child2 = child.child(j);
+                    if (child2.tagName().equals("a")) {
+                        String videoUrl = child2.attr("href");
+                        if (checkIfExists(sXKoreanModels, videoUrl)) {
+                            System.out.println("videoUrl exists " + videoUrl);
+                            continue loop;
+                        }
+                        System.out.println("videoUrl " + videoUrl);
+
+                        SeleniumEngine.getInstance().openNewTab(driver, "");
+                        SeleniumEngine.getInstance().switchTab(driver, 1);
+                        try {
+                            DriverTimerTask task = new DriverTimerTask(driver);
+                            timer.schedule(task, 10 * 1000);
+                            driver.get(videoUrl);
+                            task.cancel();
+                        } catch (Exception e3) {
+                            e3.printStackTrace();
+                            try {
+                                driver.close();
+                            } catch (Exception e4) {
+                                e4.printStackTrace();
+                            }
+                            SeleniumEngine.getInstance().switchTab(driver, 0);
+                            continue loop;
+                        }
+                        System.out.println("find real path start");
+                        String innerWindowUrl = "";
+                        try {
+                            DriverTimerTask task = new DriverTimerTask(driver);
+                            timer.schedule(task, 10 * 1000);
+                            innerWindowUrl = driver.findElement(By.id("player")).findElement(By.tagName("iframe")).getAttribute("src");
+                            task.cancel();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            try {
+                                driver.close();
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
+                            SeleniumEngine.getInstance().switchTab(driver, 0);
+                            continue loop;
+                        }
+                        System.out.println("innerVideoUrl " + innerWindowUrl);
+                        SeleniumEngine.getInstance().openNewTab(driver, "");
+                        SeleniumEngine.getInstance().switchTab(driver, 2);
+                        driver.get(innerWindowUrl);
+                        try {
+                            SeleniumEngine.getInstance().mobileClickById(driver, driver.findElement(By.id("videooverlay")), "videooverlay");
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                            driver.close();
+                            SeleniumEngine.getInstance().switchTab(driver, 1);
+                            driver.close();
+                            SeleniumEngine.getInstance().switchTab(driver, 0);
+                            continue loop;
+                        }
+                        System.out.println("find real path end");
+                        WebElement videoElement = driver.findElement(By.id("olvideo_html5_api"));
+                        String realUrl = videoElement.getAttribute("src");
+                        String imageUrl = driver.findElement(By.id("olvideo")).getAttribute("poster");
+                        String title = e.child(1).text();
+                        System.out.println("realUrl " + realUrl + " imageUrl " + imageUrl + " title " + title);
+                        driver.close();
+                        SeleniumEngine.getInstance().switchTab(driver, 1);
+                        driver.close();
+                        SeleniumEngine.getInstance().switchTab(driver, 0);
+                        XKoreanModel model = new XKoreanModel();
+                        model.imageUrl = imageUrl;
+                        model.innerVideoUrl = innerWindowUrl;
+                        model.realUrl = realUrl;
+                        model.title = title;
+                        model.videoUrl = videoUrl;
+                        sXKoreanModels.add(model);
+
+                        new Thread(() -> {
+                            saveCache(sXKoreanModels);
+                        }).start();
+                    }
+                }
+            }
+        }
+        timer.cancel();
+        System.out.println("crawl end");
+    }
+
 
     public static boolean checkIfExists(List<XKoreanModel> list, String videoUrl) {
         for (XKoreanModel model : list) {
@@ -129,4 +170,25 @@ public class CrawlXKorean {
         public String imageUrl;
         public String title;
     }
+
+    private static class DriverTimerTask extends TimerTask {
+        private ChromeDriver mChromeDriver;
+
+        public DriverTimerTask(ChromeDriver webDriver) {
+            mChromeDriver = webDriver;
+        }
+
+        @Override
+        public void run() {
+            try {
+                System.out.println("crawl time out.......");
+                if (mChromeDriver != null) {
+                    mChromeDriver.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

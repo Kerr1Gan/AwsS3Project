@@ -30,19 +30,42 @@ public class SeleniumEngine {
     private ChromeDriver mChromeDriver;
 
     private SeleniumEngine() {
-        Map<String, String> mobileEmulation = new HashMap<>();
-        //设置设备,例如:Google Nexus 7/Apple iPhone 6
-        //mobileEmulation.put("deviceName", "Google Nexus 7");
-        mobileEmulation.put("deviceName", "Nexus 6P");
-        Map<String, Object> chromeOptions = new HashMap<>();
-        chromeOptions.put("mobileEmulation", mobileEmulation);
-        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-        mChromeDriver = new ChromeDriver(capabilities);
+//        Map<String, String> mobileEmulation = new HashMap<>();
+//        //设置设备,例如:Google Nexus 7/Apple iPhone 6
+//        //mobileEmulation.put("deviceName", "Google Nexus 7");
+//        mobileEmulation.put("deviceName", "Nexus 6P");
+//        Map<String, Object> chromeOptions = new HashMap<>();
+//        chromeOptions.put("mobileEmulation", mobileEmulation);
+//        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+//        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+//        mChromeDriver = new ChromeDriver(capabilities);
     }
 
     public ChromeDriver getChromeDriver() {
+        if (mChromeDriver == null) {
+            Map<String, String> mobileEmulation = new HashMap<>();
+            //设置设备,例如:Google Nexus 7/Apple iPhone 6
+            //mobileEmulation.put("deviceName", "Google Nexus 7");
+            mobileEmulation.put("deviceName", "Nexus 6P");
+            Map<String, Object> chromeOptions = new HashMap<>();
+            chromeOptions.put("mobileEmulation", mobileEmulation);
+            DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+            mChromeDriver = new ChromeDriver(capabilities);
+        }
         return mChromeDriver;
+    }
+
+    public void releaseChromeDriver() {
+        if (mChromeDriver != null) {
+            try {
+                mChromeDriver.quit();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                mChromeDriver = null;
+            }
+        }
     }
 
     public ChromeDriver newChromeDriver() {
@@ -69,6 +92,10 @@ public class SeleniumEngine {
     public void switchTab(ChromeDriver webDriver, int index) {
         List<String> tabs = new ArrayList<>(webDriver.getWindowHandles());
         webDriver.switchTo().window(tabs.get(index)); //switches to new tab
+    }
+
+    public int getCurrentTabIndex(ChromeDriver webDriver) {
+        return new ArrayList<>(webDriver.getWindowHandles()).indexOf(webDriver.getWindowHandle());
     }
 
     public void desktopClick(WebElement webElement) {
