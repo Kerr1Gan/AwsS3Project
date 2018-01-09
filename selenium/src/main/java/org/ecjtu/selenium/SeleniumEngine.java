@@ -1,5 +1,6 @@
 package org.ecjtu.selenium;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -85,13 +86,22 @@ public class SeleniumEngine {
         return new ChromeDriver(capabilities);
     }
 
-    public void openNewTab(ChromeDriver webDriver, String url) {
+    public void openNewTabJs(ChromeDriver webDriver, String url) {
         webDriver.executeScript("window.open('" + url + "')");
+    }
+
+    public void openNewTabKeys(ChromeDriver webDriver) {
+        webDriver.findElement(By.tagName("body")).sendKeys(Keys.CONTROL + "t");
+        webDriver.findElement(By.tagName("body")).sendKeys(Keys.ENTER);
     }
 
     public void switchTab(ChromeDriver webDriver, int index) {
         List<String> tabs = new ArrayList<>(webDriver.getWindowHandles());
         webDriver.switchTo().window(tabs.get(index)); //switches to new tab
+    }
+
+    public void closeCurrentTabByJs(ChromeDriver driver) {
+        driver.executeScript("window.opener=null;window.close();");
     }
 
     public int getCurrentTabIndex(ChromeDriver webDriver) {

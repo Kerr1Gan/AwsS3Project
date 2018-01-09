@@ -11,5 +11,12 @@ public class TestBaidu {
         chromeDriver.get("http://www.baidu.com");
         WebElement ele = chromeDriver.findElement(By.id("login"));
         SeleniumEngine.getInstance().mobileClickById(chromeDriver, ele, "login");
+
+        SeleniumEngine.getInstance().openNewTabJs(chromeDriver,"");
+        SeleniumEngine.getInstance().switchTab(chromeDriver,1);
+        chromeDriver.get("http://www.baidu.com");
+        SeleniumEngine.getInstance().closeCurrentTabByJs(chromeDriver);
+//        chromeDriver.get("http://www.baidu.com");
+//        SeleniumEngine.getInstance().switchTab(chromeDriver,0);
     }
 }

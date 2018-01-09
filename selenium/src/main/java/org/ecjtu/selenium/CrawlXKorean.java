@@ -11,7 +11,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class CrawlXKorean {
@@ -31,7 +30,7 @@ public class CrawlXKorean {
         }
         ChromeDriver driver = null;
         try {
-            for (int i = 24; i <= 37; i++) {
+            for (int i = 30; i <= 37; i++) {
                 driver = SeleniumEngine.getInstance().getChromeDriver();
                 crawl(driver, String.format("http://www.xkorean.cam/page/%d", i));
                 SeleniumEngine.getInstance().releaseChromeDriver();
@@ -52,7 +51,6 @@ public class CrawlXKorean {
         String source = driver.getPageSource();
         Document doc = Jsoup.parse(source);
         Elements elements = doc.getElementsByClass("thcovering-video");
-        Timer timer = new Timer();
         for (Element e : elements) {
             System.out.println("current crawl index " + elements.indexOf(e));
             for (int i = 0; i < e.children().size(); i++) {
@@ -68,13 +66,10 @@ public class CrawlXKorean {
                         }
                         System.out.println("videoUrl " + videoUrl);
 
-                        SeleniumEngine.getInstance().openNewTab(driver, "");
+                        SeleniumEngine.getInstance().openNewTabJs(driver, "");
                         SeleniumEngine.getInstance().switchTab(driver, 1);
                         try {
-                            DriverTimerTask task = new DriverTimerTask(driver);
-                            timer.schedule(task, 10 * 1000);
                             driver.get(videoUrl);
-                            task.cancel();
                         } catch (Exception e3) {
                             e3.printStackTrace();
                             try {
@@ -88,10 +83,7 @@ public class CrawlXKorean {
                         System.out.println("find real path start");
                         String innerWindowUrl = "";
                         try {
-                            DriverTimerTask task = new DriverTimerTask(driver);
-                            timer.schedule(task, 10 * 1000);
                             innerWindowUrl = driver.findElement(By.id("player")).findElement(By.tagName("iframe")).getAttribute("src");
-                            task.cancel();
                         } catch (Exception e1) {
                             e1.printStackTrace();
                             try {
@@ -103,17 +95,33 @@ public class CrawlXKorean {
                             continue loop;
                         }
                         System.out.println("innerVideoUrl " + innerWindowUrl);
-                        SeleniumEngine.getInstance().openNewTab(driver, "");
+                        SeleniumEngine.getInstance().openNewTabJs(driver, "");
                         SeleniumEngine.getInstance().switchTab(driver, 2);
                         driver.get(innerWindowUrl);
                         try {
                             SeleniumEngine.getInstance().mobileClickById(driver, driver.findElement(By.id("videooverlay")), "videooverlay");
                         } catch (Exception e2) {
                             e2.printStackTrace();
-                            driver.close();
-                            SeleniumEngine.getInstance().switchTab(driver, 1);
-                            driver.close();
-                            SeleniumEngine.getInstance().switchTab(driver, 0);
+                            try {
+                                driver.close();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            try {
+                                SeleniumEngine.getInstance().switchTab(driver, 1);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            try {
+                                driver.close();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            try {
+                                SeleniumEngine.getInstance().switchTab(driver, 0);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
                             continue loop;
                         }
                         System.out.println("find real path end");
@@ -141,7 +149,6 @@ public class CrawlXKorean {
                 }
             }
         }
-        timer.cancel();
         System.out.println("crawl end");
     }
 
@@ -180,13 +187,16 @@ public class CrawlXKorean {
 
         @Override
         public void run() {
-            try {
-                System.out.println("crawl time out.......");
-                if (mChromeDriver != null) {
-                    mChromeDriver.close();
+            while (true) {
+                try {
+                    System.out.println("crawl time out.......");
+                    if (mChromeDriver != null) {
+                        mChromeDriver.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
