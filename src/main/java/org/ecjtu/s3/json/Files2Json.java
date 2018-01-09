@@ -24,7 +24,7 @@ public class Files2Json {
 
     public static void main(String[] args) throws JSONException {
         File file = new File(Constants.RES_PATH, "files.json");
-        File uploadDir = new File("I:\\迅雷下载");
+        File uploadDir = new File("C:\\Users\\xiang\\Desktop");
         List<File> allFiles = getFiles(uploadDir, null);
 
         JSONArray array = new JSONArray();
