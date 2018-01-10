@@ -10,9 +10,9 @@ import java.util.List;
 
 public class DownloadUrls {
 
-    private static final int BEGIN_INDEX = 600;
-    private static final int END_INDEX = 611;
-
+    private static final int BEGIN_INDEX = 16;
+    private static final int END_INDEX = 50;
+    // 15
     public static void main(String[] args) {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         List<XKoreanModel> xKoreanModels = null;
