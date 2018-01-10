@@ -25,6 +25,7 @@ public class CrawlXKorean {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (sXKoreanModels == null) {
             sXKoreanModels = new ArrayList<>();
         }
@@ -44,6 +45,7 @@ public class CrawlXKorean {
         if (driver != null) {
             driver.quit(); // 关闭驱动并退出所有窗口
         }
+        System.out.println("exit");
     }
 
     public static void crawl(ChromeDriver driver, String url) {
@@ -168,14 +170,6 @@ public class CrawlXKorean {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static class XKoreanModel implements Serializable {
-        public String videoUrl;
-        public String innerVideoUrl;
-        public String realUrl;
-        public String imageUrl;
-        public String title;
     }
 
     private static class DriverTimerTask extends TimerTask {
