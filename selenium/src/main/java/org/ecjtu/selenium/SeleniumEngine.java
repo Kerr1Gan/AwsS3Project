@@ -109,22 +109,14 @@ public class SeleniumEngine {
     }
 
     public void desktopClick(WebElement webElement) {
-        try {
-            webElement.click();
-            webElement.sendKeys(Keys.ENTER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        webElement.click();
+        webElement.sendKeys(Keys.ENTER);
     }
 
     public void mobileClick(ChromeDriver webDriver, WebElement webElement, String js) {
 //        String js = "var sub = document.getElementById(\"login\"); " + "sub.click();";
-        try {
-            webDriver.executeScript(js);
-            webElement.sendKeys(Keys.ENTER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        webDriver.executeScript(js);
+        webElement.sendKeys(Keys.ENTER);
     }
 
     public void mobileClickById(ChromeDriver webDriver, WebElement webElement, String id) {
