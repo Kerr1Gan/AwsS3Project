@@ -1,12 +1,14 @@
 package org.ecjtu.htmlunit;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class V33Model {
+public class V33Model implements Serializable{
     private String baseUrl;
     private String imageUrl;
     private String title;
     private List<String> others;
+    private String videoUrl;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -38,5 +40,13 @@ public class V33Model {
 
     public void setOthers(List<String> others) {
         this.others = others;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

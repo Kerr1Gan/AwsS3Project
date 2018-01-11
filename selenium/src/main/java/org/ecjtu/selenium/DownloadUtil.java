@@ -41,6 +41,7 @@ public class DownloadUtil {
         conn.setRequestProperty("Accept-Language", "zh_CN");
         conn.setRequestProperty("Charset", "UTF-8");
         conn.setRequestProperty("Connection", "Keep-Alive");
+//        conn.setRequestProperty("User-Agent",);
 
         //得到文件大小
         fileSize = conn.getContentLength();
@@ -94,7 +95,7 @@ public class DownloadUtil {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(5 * 1000);
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Accpt", "image/gif,image/jpeg,image/pjpeg,image/pjpeg, "
+                conn.setRequestProperty("Accept", "image/gif,image/jpeg,image/pjpeg,image/pjpeg, "
                         + "application/x-shockwave-flash, application/xaml+xml, "
                         + "application/vnd.ms-xpsdocument, application/x-ms-xbap"
                         + "application/x-ms-application,application/vnd.ms-excel"
