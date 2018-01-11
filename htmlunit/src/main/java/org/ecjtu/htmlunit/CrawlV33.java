@@ -8,10 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +17,7 @@ import java.util.Map;
 
 public class CrawlV33 {
 
-    private static final Map<String, List<V33Model>> sMap = new LinkedHashMap<>();
+    private static Map<String, List<V33Model>> sMap;
 
     public static void main(String[] args) throws IOException {
         try {
@@ -33,6 +30,14 @@ public class CrawlV33 {
             e.printStackTrace();
         }
 
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(new File(".\\res\\v33a")))) {
+            sMap = (Map<String, List<V33Model>>) is.readObject();
+        } catch (Exception e) {
+        } finally {
+            if (sMap == null) {
+                sMap = new LinkedHashMap<>();
+            }
+        }
         //创建web客户端
         final WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);
@@ -158,8 +163,10 @@ public class CrawlV33 {
                     e.printStackTrace();
                     break;
                 }
-                try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(".\\res\\v33a")))) {
+                File cache = new File(".\\res\\v33a_tmp");
+                try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(cache))) {
                     os.writeObject(ObjectUtil.deepCopy(sMap));
+                    cache.renameTo(new File(".\\res\\v33a"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
