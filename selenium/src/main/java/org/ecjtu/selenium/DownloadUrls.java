@@ -10,8 +10,8 @@ import java.util.List;
 
 public class DownloadUrls {
 
-    private static final int BEGIN_INDEX = 16;
-    private static final int END_INDEX = 50;
+    private static final int BEGIN_INDEX = 0;
+    private static final int END_INDEX = 10;
     // 15
     public static void main(String[] args) {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);

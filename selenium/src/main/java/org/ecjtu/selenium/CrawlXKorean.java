@@ -31,7 +31,7 @@ public class CrawlXKorean {
         }
         ChromeDriver driver = null;
         try {
-            for (int i = 2; i <= 37; i++) {
+            for (int i = 1; i <= 37; i++) {
                 driver = SeleniumEngine.getInstance().getChromeDriver();
                 crawl(driver, String.format("http://www.xkorean.cam/page/%d", i));
                 SeleniumEngine.getInstance().releaseChromeDriver();
