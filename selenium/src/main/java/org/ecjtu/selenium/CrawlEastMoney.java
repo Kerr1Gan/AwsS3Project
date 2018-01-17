@@ -36,7 +36,7 @@ public class CrawlEastMoney {
             int curPage = 1;
             int page = Integer.valueOf(aTags.get(aTags.size() - 2).text());
             String oldText = "";
-            for (int i = 0; i < 175; i++) {
+            for (int i = 0; i < page; i++) {
                 if (curPage <= page) {
                     source = driver.getPageSource();
                     doc = Jsoup.parse(source);
