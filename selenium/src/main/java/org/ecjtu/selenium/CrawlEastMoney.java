@@ -25,10 +25,10 @@ public class CrawlEastMoney {
             Element body = doc.body();
 
             List<GuPiaoModel> modelList = null;
-            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney"))) {
-                modelList = (List<GuPiaoModel>) is.readObject();
-            } catch (Exception e) {
-            }
+//            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney"))) {
+//                modelList = (List<GuPiaoModel>) is.readObject();
+//            } catch (Exception e) {
+//            }
             if (modelList == null) {
                 modelList = new ArrayList<>();
             }
