@@ -6,58 +6,69 @@ import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.util.List;
 
 public class CrawlEastMoneyImage {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
-//        driver.manage().timeouts().pageLoadTimeout(8, TimeUnit.SECONDS);
-//        driver.manage().timeouts().setScriptTimeout(3, TimeUnit.SECONDS);
-        try {
-            //        driver.manage().window().maximize();
-            try {
-                driver.get("http://quote.eastmoney.com/sh600162.html");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            try {
-                Actions actions = new Actions(driver);
-                actions.sendKeys(Keys.ESCAPE).perform();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                System.out.println(driver.getPageSource());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            WebElement element = driver.findElement(By.id("emchart-0"));
-            Actions action = new Actions(driver);
-            action.moveToElement(element).perform();
-            element = driver.findElement(By.id("emchart-0"));
-            Dimension size = element.getSize();
-            File file = driver.getScreenshotAs(FILE);
-            BufferedImage image = ImageIO.read(file);
-            BufferedImage subImage = image.getSubimage(202, 570, size.width, size.height);
-            File tmpFile = new File("res", "screenshot.png");
-            ImageIO.write(subImage, "png", tmpFile);
-
-//            element = driver.findElement(By.id("emchartk"));
-//            action = new Actions(driver);
-//            action.moveToElement(element).perform();
-//            size = element.getSize();
-//            file = driver.getScreenshotAs(FILE);
-//            image = ImageIO.read(file);
-//            subImage = image.getSubimage(309, 474, size.width, size.height);
-//            tmpFile = new File("res", "screenshot2.png");
-//            ImageIO.write(subImage, "png", tmpFile);
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res\\config.txt")));
+        String line = reader.readLine();
+        String[] params = line.split(" ");
+        int[] metric = new int[params.length];
+        int index = 0;
+        for (String param : params) {
+            metric[index++] = Integer.parseInt(param);
+        }
+        List<CrawlEastMoney.GuPiaoModel> modelList = null;
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney"))) {
+            modelList = (List<CrawlEastMoney.GuPiaoModel>) is.readObject();
         } catch (Exception e) {
-            e.printStackTrace();
+        }
+        if (modelList != null) {
+            for (CrawlEastMoney.GuPiaoModel model : modelList) {
+                try {
+                    try {
+                        driver.get(model.href);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        Actions actions = new Actions(driver);
+                        actions.sendKeys(Keys.ESCAPE).perform();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    File dir = new File(".\\res\\", model.daiMa + model.name);
+                    if (!dir.exists() || !dir.isDirectory()) {
+                        dir.mkdir();
+                    }
+                    WebElement element = driver.findElement(By.id("emchart-0"));
+                    Actions action = new Actions(driver);
+                    action.moveToElement(element).perform();
+                    element = driver.findElement(By.id("emchart-0"));
+                    Dimension size = element.getSize();
+                    File file = driver.getScreenshotAs(FILE);
+                    BufferedImage image = ImageIO.read(file);
+                    BufferedImage subImage = image.getSubimage(metric[0], metric[1], metric[2], metric[3]);
+                    File tmpFile = new File(dir, "emchart-0.png");
+                    ImageIO.write(subImage, "png", tmpFile);
+
+                    element = driver.findElement(By.id("emchartk"));
+                    action = new Actions(driver);
+                    action.moveToElement(element).perform();
+                    new Actions(driver).moveByOffset(0, -metric[7] / 2).perform();
+                    file = driver.getScreenshotAs(FILE);
+                    image = ImageIO.read(file);
+                    subImage = image.getSubimage(metric[4], metric[5], metric[6], metric[7]);
+                    tmpFile = new File(dir, "emchartk.png");
+                    ImageIO.write(subImage, "png", tmpFile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
         }
         driver.quit();
     }
@@ -76,7 +87,7 @@ public class CrawlEastMoneyImage {
 
             File var4;
             try {
-                File tmpFile = new File("res", "screenshot.png");
+                File tmpFile = new File("res", "tmp.png");
                 stream = new FileOutputStream(tmpFile);
                 stream.write(data);
                 var4 = tmpFile;

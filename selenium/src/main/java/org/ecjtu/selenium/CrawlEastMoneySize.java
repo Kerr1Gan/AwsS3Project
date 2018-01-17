@@ -1,38 +1,38 @@
 package org.ecjtu.selenium;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class SeleniumCaptureFunction {
-
+@SuppressWarnings("Duplicates")
+public class CrawlEastMoneySize {
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
         try {
-            //        driver.manage().window().maximize();
             driver.get("http://quote.eastmoney.com/sh600162.html");
-            System.out.println(driver.getPageSource());
             WebElement element = driver.findElement(By.id("emchart-0"));
             Actions action = new Actions(driver);
             action.moveToElement(element).perform();
-            element = driver.findElement(By.id("emchart-0"));
-            driver.executeScript("return document.body.clientHeight;");
-//            Long top = (Long) driver.executeScript("var box = document.getElementById(\"emchart-0\"); var pos = box.getBoundingClientRect();return pos.top");
-//            Double left = (Double) driver.executeScript("var box = document.getElementById(\"emchart-0\"); var pos = box.getBoundingClientRect();return pos.left");
-            Dimension size = element.getSize();
-            File file = driver.getScreenshotAs(FILE);
-            BufferedImage image = ImageIO.read(file);
-            BufferedImage subImage = image.getSubimage(309, 474, 700, 350);
-            File tmpFile = new File("res", "screenshot.png");
-            ImageIO.write(subImage, "png", tmpFile);
-        }catch (Exception e){
+
+            SeleniumEngine.getInstance().openNewTabJs(driver, "");
+            SeleniumEngine.getInstance().switchTab(driver, 1);
+            driver.get("http://quote.eastmoney.com/sh600162.html");
+            element = driver.findElement(By.id("emchartk"));
+            action = new Actions(driver);
+            action.moveToElement(element).perform();
+            while (!Thread.interrupted()) {
+                Thread.sleep(500);
+                driver.getPageSource();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         driver.quit();
