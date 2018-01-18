@@ -47,6 +47,7 @@ public class CrawlEastMoney {
                     trList.remove(0);
                     String newText = trList.get(0).text();
                     while (newText.equals(oldText)) {
+                        Thread.sleep(300);
                         source = driver.getPageSource();
                         doc = Jsoup.parse(source);
                         body = doc.body();

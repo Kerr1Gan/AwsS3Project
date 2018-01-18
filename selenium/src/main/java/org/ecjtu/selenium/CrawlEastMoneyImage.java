@@ -7,9 +7,13 @@ import org.openqa.selenium.interactions.Actions;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class CrawlEastMoneyImage {
+    private static final SimpleDateFormat sSimpleDateFormat = new SimpleDateFormat("yyyy-M-d");
+
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
@@ -27,23 +31,33 @@ public class CrawlEastMoneyImage {
         } catch (Exception e) {
         }
         if (modelList != null) {
+            File dir = new File(".\\res\\", sSimpleDateFormat.format(new Date()));
+            if (!dir.exists() || !dir.isDirectory()) {
+                dir.mkdir();
+            }
             for (CrawlEastMoney.GuPiaoModel model : modelList) {
+                File image0 = new File(dir.getAbsolutePath() + "\\" + model.daiMa + model.name, "emchart-0.png");
+                File image1 = new File(dir.getAbsolutePath() + "\\" + model.daiMa + model.name, "emchartk.png");
+                if (image0.exists() && image1.exists()) {
+                    continue;
+                }
                 try {
                     try {
                         driver.get(model.href);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    try {
-                        Actions actions = new Actions(driver);
-                        actions.sendKeys(Keys.ESCAPE).perform();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+//                    try {
+//                        Actions actions = new Actions(driver);
+//                        actions.sendKeys(Keys.ESCAPE).perform();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+                    File saveDir = new File(dir, model.daiMa + model.name);
+                    if (!saveDir.exists() || !saveDir.isDirectory()) {
+                        saveDir.mkdirs();
                     }
-                    File dir = new File(".\\res\\", model.daiMa + model.name);
-                    if (!dir.exists() || !dir.isDirectory()) {
-                        dir.mkdir();
-                    }
+
                     WebElement element = driver.findElement(By.id("emchart-0"));
                     Actions action = new Actions(driver);
                     action.moveToElement(element).perform();
@@ -52,7 +66,10 @@ public class CrawlEastMoneyImage {
                     File file = driver.getScreenshotAs(FILE);
                     BufferedImage image = ImageIO.read(file);
                     BufferedImage subImage = image.getSubimage(metric[0], metric[1], metric[2], metric[3]);
-                    File tmpFile = new File(dir, "emchart-0.png");
+                    File tmpFile = new File(saveDir, "emchart-0.png");
+                    if (!tmpFile.exists()) {
+                        tmpFile.createNewFile();
+                    }
                     ImageIO.write(subImage, "png", tmpFile);
 
                     element = driver.findElement(By.id("emchartk"));
@@ -62,7 +79,10 @@ public class CrawlEastMoneyImage {
                     file = driver.getScreenshotAs(FILE);
                     image = ImageIO.read(file);
                     subImage = image.getSubimage(metric[4], metric[5], metric[6], metric[7]);
-                    tmpFile = new File(dir, "emchartk.png");
+                    tmpFile = new File(saveDir, "emchartk.png");
+                    if (!tmpFile.exists()) {
+                        tmpFile.createNewFile();
+                    }
                     ImageIO.write(subImage, "png", tmpFile);
                 } catch (Exception e) {
                     e.printStackTrace();
