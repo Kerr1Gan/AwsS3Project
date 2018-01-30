@@ -18,8 +18,8 @@ public class CrawlEastMoney {
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
-        driver.get("http://quote.eastmoney.com/center/list.html#33");
         try {
+            driver.get("http://quote.eastmoney.com/center/list.html#33");
             String source = driver.getPageSource();
             Document doc = Jsoup.parse(source);
             Element body = doc.body();
@@ -32,7 +32,7 @@ public class CrawlEastMoney {
             if (modelList == null) {
                 modelList = new ArrayList<>();
             }
-            List<Element> aTags = body.getElementById("pagenav").getElementsByTag("a");
+            List<Element> aTags = body.getElementsByClass("pagination").get(0).getElementsByTag("a");
             int curPage = 1;
             int page = Integer.valueOf(aTags.get(aTags.size() - 2).text());
             String oldText = "";
