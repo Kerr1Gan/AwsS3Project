@@ -14,7 +14,7 @@ public class SeleniumCaptureFunction {
 
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-        ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
+        ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
         try {
             //        driver.manage().window().maximize();
             driver.get("http://quote.eastmoney.com/sh600162.html");

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class CrawlEastMoneySize {
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-        ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
+        ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
         try {
             driver.get("http://quote.eastmoney.com/sh600162.html");
             WebElement element = driver.findElement(By.id("emchart-0"));

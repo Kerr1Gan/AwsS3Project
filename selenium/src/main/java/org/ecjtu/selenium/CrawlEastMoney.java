@@ -17,7 +17,7 @@ public class CrawlEastMoney {
 
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-        ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
+        ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
         try {
             driver.get("http://quote.eastmoney.com/center/list.html#33");
             String source = driver.getPageSource();
@@ -41,24 +41,22 @@ public class CrawlEastMoney {
                     source = driver.getPageSource();
                     doc = Jsoup.parse(source);
                     body = doc.body();
-                    Element table = body.getElementById("fixed");
-                    table.getElementsByTag("tr");
-                    List<Element> trList = table.getElementsByTag("tr");
-                    trList.remove(0);
-                    String newText = trList.get(0).text();
+                    List<Element> table = body.getElementsByTag("tbody").get(0).getElementsByTag("tr");
+                    String newText = table.get(0).text();
+                    int retryCount = 0;
                     while (newText.equals(oldText)) {
                         Thread.sleep(300);
                         source = driver.getPageSource();
                         doc = Jsoup.parse(source);
                         body = doc.body();
-                        table = body.getElementById("fixed");
-                        table.getElementsByTag("tr");
-                        trList = table.getElementsByTag("tr");
-                        trList.remove(0);
-                        newText = trList.get(0).text();
+                        table = body.getElementsByTag("tbody").get(0).getElementsByTag("tr");
+                        newText = table.get(0).text();
+                        if (retryCount++ > 3) {
+                            oldText = "";
+                        }
                     }
                     oldText = newText;
-                    for (Element tr : trList) {
+                    for (Element tr : table) {
                         GuPiaoModel model = new GuPiaoModel();
                         model.daiMa = tr.child(1).text();
                         model.name = tr.child(2).text();
@@ -82,7 +80,7 @@ public class CrawlEastMoney {
                 }
                 WebElement next = null;
                 try {
-                    next = driver.findElement(By.id("pagenav")).findElement(By.linkText(String.valueOf("下一页")));
+                    next = driver.findElement(By.id("common_table_next"));
                 } catch (Exception e) {
                     e.printStackTrace();
                     i--;
@@ -92,7 +90,7 @@ public class CrawlEastMoney {
                     continue;
                 }
                 try {
-                    SeleniumEngine.getInstance().desktopClick(next);
+                    next.click();
                 } catch (Exception e) {
                 }
             }

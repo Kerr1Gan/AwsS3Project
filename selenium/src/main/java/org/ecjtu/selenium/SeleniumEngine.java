@@ -81,7 +81,7 @@ public class SeleniumEngine {
         return new ChromeDriver(capabilities);
     }
 
-    public ChromeDriver newDestopChromeDriver() {
+    public ChromeDriver newDesktopChromeDriver() {
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         return new ChromeDriver(capabilities);
     }

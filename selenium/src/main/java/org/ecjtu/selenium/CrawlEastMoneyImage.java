@@ -19,7 +19,7 @@ public class CrawlEastMoneyImage {
 
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-        ChromeDriver driver = SeleniumEngine.getInstance().newDestopChromeDriver();
+        ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new FileReader(new File("res\\config.txt")));
         String line = reader.readLine();
@@ -45,7 +45,8 @@ public class CrawlEastMoneyImage {
                 Thread.sleep(500);
                 WebElement button = driver.findElement(By.tagName("button"));
                 try {
-                    SeleniumEngine.getInstance().desktopClick(button);
+                    button.click();
+//                    SeleniumEngine.getInstance().desktopClick(button);
                 } catch (Exception e) {
                 }
                 Thread.sleep(500);
