@@ -20,7 +20,7 @@ public class CrawlEastMoneyImage {
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
-        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new FileReader(new File("res\\config.txt")));
         String line = reader.readLine();
         String[] params = line.split(" ");
@@ -41,22 +41,30 @@ public class CrawlEastMoneyImage {
                 ex.printStackTrace();
             }
             String text;
-            try {
-                Thread.sleep(500);
-                WebElement button = driver.findElement(By.tagName("button"));
+            while (true){
                 try {
-                    button.click();
+                    Thread.sleep(500);
+                    if(driver==null){
+                        driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
+                        driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
+                    }
+                    WebElement button = driver.findElement(By.tagName("button"));
+                    try {
+                        button.click();
 //                    SeleniumEngine.getInstance().desktopClick(button);
+                    } catch (Exception e) {
+                    }
+                    Thread.sleep(500);
+                    text = driver.findElements(By.className("clearflaot")).get(5).getText();
+                    text = text.substring(text.indexOf("\n") + 1);
+                    text = text.split(" ")[0];
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    driver.quit();
+                    driver =null;
+                    continue;
                 }
-                Thread.sleep(500);
-                text = driver.findElements(By.className("clearflaot")).get(5).getText();
-                text = text.substring(text.indexOf("\n") + 1);
-                text = text.split(" ")[0];
-            } catch (Exception e) {
-                e.printStackTrace();
-                driver.quit();
-                return;
+                break;
             }
             File dir = new File(".\\res\\", text);
             if (!dir.exists() || !dir.isDirectory()) {
@@ -69,17 +77,24 @@ public class CrawlEastMoneyImage {
                     continue;
                 }
                 try {
-                    try {
-                        driver.get(model.href);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    while (true) {
+                        try {
+                            if (driver!=null) {
+                                driver.get(model.href);
+                            } else {
+                                driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
+                                driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
+                                driver.get(model.href);
+                            }
+                        } catch (TimeoutException e) {
+                            driver.quit();
+                            driver=null;
+                            e.printStackTrace();
+                            continue;
+                        }
+                        break;
                     }
-                    try {
-                        Actions actions = new Actions(driver);
-                        actions.sendKeys(Keys.ESCAPE).perform();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+
                     File saveDir = new File(dir, model.daiMa + name);
                     if (!saveDir.exists() || !saveDir.isDirectory()) {
                         saveDir.mkdirs();

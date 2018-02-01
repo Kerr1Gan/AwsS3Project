@@ -3,6 +3,7 @@ package org.ecjtu.htmlunit;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -113,7 +114,8 @@ public class CrawlV33 {
             for (int i = index - 1; i > 0; i--) {
                 model = new V33Model();
                 model.setBaseUrl(page.getBaseURI() + i);
-                model.setImageUrl(imgUrl.substring(0, imgUrl.lastIndexOf("/")) + i + "+350");
+                String base = page.getBaseURI().substring(page.getBaseURI().lastIndexOf("/"));
+                model.setImageUrl(imgUrl.substring(0, imgUrl.lastIndexOf("/")) + base + i + "+350");
                 model.setTitle(null);
                 result.add(model);
             }
@@ -167,7 +169,7 @@ public class CrawlV33 {
                 File cache = new File(".\\res\\v33a_tmp");
                 try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(cache))) {
                     os.writeObject(ObjectUtil.deepCopy(sMap));
-                    cache.renameTo(new File(".\\res\\v33a"));
+                    FileUtils.moveFile(cache, new File(".\\res\\v33a"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
