@@ -6,12 +6,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.*;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +22,6 @@ public class CrawlEastMoneyCenter {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(15, TimeUnit.SECONDS);
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res\\config_zhishu.txt")));
-        String line = reader.readLine();
-        String[] params = line.split(" ");
-        int[] metric = new int[params.length];
-        int index = 0;
-        for (String param : params) {
-            metric[index++] = Integer.parseInt(param);
-        }
         try {
             int c = 0;
             while (true) {
@@ -75,18 +65,6 @@ public class CrawlEastMoneyCenter {
                 models.add(model);
             }
             toJson(models);
-            WebElement element = driver.findElement(By.id("hsindex"));
-            Actions action = new Actions(driver);
-            action.moveToElement(element).perform();
-
-            File file = driver.getScreenshotAs(FILE);
-            BufferedImage image = ImageIO.read(file);
-            BufferedImage subImage = image.getSubimage(metric[0], metric[1], metric[2], metric[3]);
-            File tmpFile = new File(new File(".\\res\\"), "zhishu.png");
-            if (!tmpFile.exists()) {
-                tmpFile.createNewFile();
-            }
-            ImageIO.write(subImage, "png", tmpFile);
         } catch (Exception e) {
             e.printStackTrace();
         }

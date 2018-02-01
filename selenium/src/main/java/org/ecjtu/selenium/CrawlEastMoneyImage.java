@@ -34,6 +34,11 @@ public class CrawlEastMoneyImage {
             modelList = (List<CrawlEastMoney.GuPiaoModel>) is.readObject();
         } catch (Exception e) {
         }
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney_zhishu"))) {
+            List<CrawlEastMoney.GuPiaoModel> list2 = (List<CrawlEastMoney.GuPiaoModel>) is.readObject();
+            modelList.addAll(0,list2);
+        } catch (Exception e) {
+        }
         if (modelList != null) {
             try {
                 driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
