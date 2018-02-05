@@ -73,7 +73,7 @@ public class CrawlEastMoneyCenter {
 
     @SuppressWarnings("Duplicates")
     public static void toJson(List<CrawlEastMoney.GuPiaoModel> list) {
-        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(".\\res\\eastmoney_center"))) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("."+File.separator+"res"+File.separator+"eastmoney_center"))) {
             os.writeObject(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,7 +96,7 @@ public class CrawlEastMoneyCenter {
             jObj.addProperty("href", model.href);
             jArr.add(jObj);
         }
-        try (FileOutputStream os = new FileOutputStream(new File(".\\res\\eastmoney_center.json"))) {
+        try (FileOutputStream os = new FileOutputStream(new File("."+File.separator+"res"+File.separator+"eastmoney_center.json"))) {
             os.write(jArr.toString().getBytes("utf-8"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();

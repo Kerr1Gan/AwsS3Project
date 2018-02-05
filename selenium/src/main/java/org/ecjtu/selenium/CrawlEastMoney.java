@@ -102,7 +102,7 @@ public class CrawlEastMoney {
     }
 
     public static void toJson(List<GuPiaoModel> list) {
-        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(".\\res\\eastmoney"))) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("."+File.separator+"res"+File.separator+"eastmoney"))) {
             os.writeObject(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,7 +126,7 @@ public class CrawlEastMoney {
             jObj.addProperty("href", model.href);
             jArr.add(jObj);
         }
-        try (FileOutputStream os = new FileOutputStream(new File(".\\res\\eastmoney.json"))) {
+        try (FileOutputStream os = new FileOutputStream(new File("."+File.separator+"res"+File.separator+"eastmoney.json"))) {
             os.write(jArr.toString().getBytes("utf-8"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();

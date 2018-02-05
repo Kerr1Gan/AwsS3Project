@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,19 @@ import java.util.Map;
 
 public class SeleniumEngine {
 
-    public static final String DRIVE_PATH = ".\\selenium\\src\\libs\\chromedriver.exe";
+    public static final String DRIVE_PATH;
+    public static String FILE_SEPERATOR;
+
+    static {
+        String suffix;
+        if (File.separator.equals("\\")) {
+            suffix = "chromedriver.exe";
+        } else {
+            suffix = "chromedriver";
+        }
+        DRIVE_PATH = String.format(".%sselenium%ssrc%slibs%s%s", File.separator, File.separator, File.separator, File.separator, suffix);
+        System.out.println(System.getProperty("os.name") + " file separator " + File.separator + " driver path " + DRIVE_PATH);
+    }
 
     private static class INNER {
         private static final SeleniumEngine INSTANCE = new SeleniumEngine();
@@ -22,6 +35,14 @@ public class SeleniumEngine {
 
     public static void initEngine(String drivePath) {
         System.setProperty("webdriver.chrome.driver", drivePath);
+
+//        if(platform == null || platform.equals("")){
+//            FILE_SEPERATOR = "";
+//        } else if(platform.equals("linux")){
+//            FILE_SEPERATOR = "/";
+//        }else{
+//            FILE_SEPERATOR = "\\";
+//        }
     }
 
     public static SeleniumEngine getInstance() {

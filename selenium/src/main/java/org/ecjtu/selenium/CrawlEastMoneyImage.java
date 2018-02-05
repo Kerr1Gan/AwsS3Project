@@ -20,8 +20,8 @@ public class CrawlEastMoneyImage {
     public static void main(String[] args) throws IOException {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
         ChromeDriver driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
-        driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res\\config.txt")));
+        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res" + File.separator + "config.txt")));
         String line = reader.readLine();
         String[] params = line.split(" ");
         int[] metric = new int[params.length];
@@ -30,26 +30,28 @@ public class CrawlEastMoneyImage {
             metric[index++] = Integer.parseInt(param);
         }
         List<CrawlEastMoney.GuPiaoModel> modelList = null;
-        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney"))) {
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream("res" + File.separator + "eastmoney"))) {
             modelList = (List<CrawlEastMoney.GuPiaoModel>) is.readObject();
         } catch (Exception e) {
         }
-        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(".\\res\\eastmoney_zhishu"))) {
+        try (ObjectInputStream is = new ObjectInputStream(new FileInputStream("res" + File.separator + "eastmoney_zhishu"))) {
             List<CrawlEastMoney.GuPiaoModel> list2 = (List<CrawlEastMoney.GuPiaoModel>) is.readObject();
-            modelList.addAll(0,list2);
+            modelList.addAll(0, list2);
         } catch (Exception e) {
         }
+        loop:
         if (modelList != null) {
             try {
                 driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            String text;
-            while (true){
+            String text = null;
+            while (true) {
                 try {
                     Thread.sleep(500);
-                    if(driver==null){
+                    if (driver == null) {
+                        driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
                         driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
                         driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
                     }
@@ -63,28 +65,31 @@ public class CrawlEastMoneyImage {
                     text = driver.findElements(By.className("clearflaot")).get(5).getText();
                     text = text.substring(text.indexOf("\n") + 1);
                     text = text.split(" ")[0];
-                } catch (Exception e) {
+                } catch (TimeoutException e) {
                     e.printStackTrace();
                     driver.quit();
-                    driver =null;
+                    driver = null;
                     continue;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break loop;
                 }
                 break;
             }
-            File dir = new File(".\\res\\", text);
+            File dir = new File("res" + File.separator, text);
             if (!dir.exists() || !dir.isDirectory()) {
                 dir.mkdirs();
             }
             for (CrawlEastMoney.GuPiaoModel model : modelList) {
                 String name = model.name.replace("*", "@");
-                File image0 = new File(dir.getAbsolutePath() + "\\" + model.daiMa + name, "merge.png");
+                File image0 = new File(dir.getAbsolutePath() + File.separator + model.daiMa + name, "merge.png");
                 if (image0.exists()) {
                     continue;
                 }
                 try {
                     while (true) {
                         try {
-                            if (driver!=null) {
+                            if (driver != null) {
                                 driver.get(model.href);
                             } else {
                                 driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
@@ -93,7 +98,7 @@ public class CrawlEastMoneyImage {
                             }
                         } catch (TimeoutException e) {
                             driver.quit();
-                            driver=null;
+                            driver = null;
                             e.printStackTrace();
                             continue;
                         }
@@ -169,6 +174,7 @@ public class CrawlEastMoneyImage {
             }
         }
         driver.quit();
+        System.out.println("system exit");
     }
 
     public static void merge(File parent, List<String> filePath) throws IOException {
