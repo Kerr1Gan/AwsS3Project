@@ -1,6 +1,7 @@
 package org.ecjtu.htmlunit;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.io.FileUtils;
@@ -41,7 +42,7 @@ public class CrawlV33 {
         }
 
         //创建web客户端
-        final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+        WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);
         //设置链接地址
         HtmlPage page = webClient.getPage("http://v.33k.im");
@@ -80,8 +81,9 @@ public class CrawlV33 {
         }
         for (String url : urls) {
             try {
-                page.cleanUp();
-                page = webClient.getPage(url);
+                releaseWebClient(webClient, page);
+                webClient = createWebClient();
+                  page = webClient.getPage(url);
             } catch (Exception e) {
                 e.printStackTrace();
                 continue;
@@ -130,7 +132,8 @@ public class CrawlV33 {
                     continue;
                 }
                 try {
-                    page.cleanUp();
+                    releaseWebClient(webClient, page);
+                    webClient = createWebClient();
                     page = webClient.getPage(model.getBaseUrl());
                     jsoup = Jsoup.parse(page.asXml());
                     body = jsoup.body();
@@ -167,9 +170,12 @@ public class CrawlV33 {
                     break;
                 }
                 File cache = new File(".\\res\\v33a_tmp");
+                if (cache.exists()) {
+                    cache.delete();
+                }
                 try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(cache))) {
                     os.writeObject(ObjectUtil.deepCopy(sMap));
-                    FileUtils.moveFile(cache, new File(".\\res\\v33a"));
+                    FileUtils.copyFile(cache, new File(".\\res\\v33a"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -178,5 +184,19 @@ public class CrawlV33 {
         thread.setDaemon(true);
         thread.start();
         return thread;
+    }
+
+    public static void releaseWebClient(WebClient client, HtmlPage page) {
+        page.remove();
+        page.removeAllChildren();
+        page.cleanUp();
+        client.getCurrentWindow().getJobManager().removeAllJobs();
+        client.close();
+    }
+
+    public static WebClient createWebClient() {
+        WebClient webClient = new WebClient(BrowserVersion.CHROME);
+        webClient.getOptions().setCssEnabled(false);
+        return webClient;
     }
 }

@@ -1,5 +1,6 @@
-package org.ecjtu.selenium;
+package org.ecjtu.selenium.eastmoney;
 
+import org.ecjtu.selenium.SeleniumEngine;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;

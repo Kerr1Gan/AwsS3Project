@@ -1,4 +1,4 @@
-package org.ecjtu.selenium;
+package org.ecjtu.selenium.xkorean;
 
 import java.io.Serializable;
 

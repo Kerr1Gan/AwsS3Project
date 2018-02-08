@@ -1,5 +1,6 @@
-package org.ecjtu.selenium;
+package org.ecjtu.selenium.eastmoney;
 
+import org.ecjtu.selenium.SeleniumEngine;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriverException;

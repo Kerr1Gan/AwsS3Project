@@ -1,7 +1,8 @@
-package org.ecjtu.selenium;
+package org.ecjtu.selenium.xkorean;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.ecjtu.selenium.SeleniumEngine;
 
 import java.io.File;
 import java.io.FileInputStream;

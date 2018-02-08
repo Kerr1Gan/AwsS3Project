@@ -1,7 +1,8 @@
-package org.ecjtu.selenium;
+package org.ecjtu.selenium.eastmoney;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.ecjtu.selenium.SeleniumEngine;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
