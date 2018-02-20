@@ -42,11 +42,6 @@ public class CrawlEastMoneyImage {
         }
         loop:
         if (modelList != null) {
-            try {
-                driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
             String text = null;
             while (true) {
                 try {
@@ -55,17 +50,32 @@ public class CrawlEastMoneyImage {
                         driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
                         driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
                         driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
+                        Thread.sleep(500);
+                    } else {
+                        driver.get("http://so.eastmoney.com/web/s?keyword=%E4%B8%8A%E8%AF%81%E6%8C%87%E6%95%B0");
                     }
                     WebElement button = driver.findElement(By.tagName("button"));
                     try {
                         button.click();
 //                    SeleniumEngine.getInstance().desktopClick(button);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     Thread.sleep(500);
-                    text = driver.findElements(By.className("clearflaot")).get(5).getText();
-                    text = text.substring(text.indexOf("\n") + 1);
-                    text = text.split(" ")[0];
+                    int count = 0;
+                    while (true) {
+                        text = driver.findElements(By.className("clearflaot")).get(5).getText();
+                        text = text.substring(text.indexOf("\n") + 1);
+                        text = text.split(" ")[0];
+                        if (text != null || !text.equals("")) {
+                            break;
+                        } else {
+                            Thread.sleep(500);
+                            if (count++ >= 5) {
+                                break;
+                            }
+                        }
+                    }
                 } catch (TimeoutException e) {
                     e.printStackTrace();
                     driver.quit();
@@ -77,11 +87,14 @@ public class CrawlEastMoneyImage {
                 }
                 break;
             }
+            System.out.println("date " + text);
             File dir = new File("res" + File.separator, text);
             if (!dir.exists() || !dir.isDirectory()) {
                 dir.mkdirs();
             }
-            for (CrawlEastMoney.GuPiaoModel model : modelList) {
+            List<CrawlEastMoney.GuPiaoModel> extraList = new ArrayList<>();
+            for (int j = 0; j < modelList.size(); j++) {
+                CrawlEastMoney.GuPiaoModel model = modelList.get(j);
                 String name = model.name.replace("*", "@");
                 File image0 = new File(dir.getAbsolutePath() + File.separator + model.daiMa + name, "merge.png");
                 if (image0.exists()) {
@@ -101,6 +114,7 @@ public class CrawlEastMoneyImage {
                             driver.quit();
                             driver = null;
                             e.printStackTrace();
+                            extraList.add(model);
                             continue;
                         }
                         break;

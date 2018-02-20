@@ -1,7 +1,6 @@
 package org.ecjtu.htmlunit;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.io.FileUtils;
@@ -30,6 +29,9 @@ public class CrawlV33 {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+
+
+
         }
 
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(new File(".\\res\\v33a")))) {
@@ -79,11 +81,15 @@ public class CrawlV33 {
                 urls.add(page.getBaseURI() + url.replace("/", ""));
             }
         }
+        int count = 0;
         for (String url : urls) {
             try {
-                releaseWebClient(webClient, page);
-                webClient = createWebClient();
-                  page = webClient.getPage(url);
+                if (count++ > 10) {
+                    count = 0;
+                    releaseWebClient(webClient, page);
+                    webClient = createWebClient();
+                }
+                page = webClient.getPage(url);
             } catch (Exception e) {
                 e.printStackTrace();
                 continue;

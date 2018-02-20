@@ -90,7 +90,7 @@ public class SeleniumEngine {
         }
     }
 
-    public ChromeDriver newChromeDriver() {
+    public ChromeDriver newMobileDriver() {
         Map<String, String> mobileEmulation = new HashMap<>();
         //设置设备,例如:Google Nexus 7/Apple iPhone 6
         //mobileEmulation.put("deviceName", "Google Nexus 7");
