@@ -81,7 +81,7 @@ public class TestDES {
         // String s = new String(inStr);
         char[] a = inStr.toCharArray();
         for (int i = 0; i < a.length; i++) {
-            a[i] = (char) (a[i] ^ 't');
+            a[i] = (char) (a[i] ^ 's');
         }
         String s = new String(a);
         return s;
@@ -96,8 +96,15 @@ public class TestDES {
             }
         } catch (Exception e) {
         }
-        td.encrypt("res\\r.txt", "res\\r解密.txt"); //加密
-        td.decrypt("res\\r解密.txt", "res\\r1.txt"); //解密
+        BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\KerriGan\\Desktop\\s3.txt"));
+        String content = reader.readLine();
+        String klContent = KL(content);
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\KerriGan\\Desktop\\s3加密.txt"));
+        writer.write(klContent);
+        writer.close();
+        td.encrypt("C:\\Users\\KerriGan\\Desktop\\s3加密.txt", "C:\\Users\\KerriGan\\Desktop\\s3加密.txt"); //加密
+//        td.decrypt("res\\r解密.txt", "res\\r1.txt"); //解密
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("res\\key"))) {
             os.writeObject(td.key);
         } catch (Exception e) {
