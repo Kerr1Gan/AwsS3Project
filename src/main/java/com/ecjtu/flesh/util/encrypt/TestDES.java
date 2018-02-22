@@ -88,7 +88,7 @@ public class TestDES {
     }
 
     public static void main(String[] args) throws Exception {
-        TestDES td = new TestDES(MD5Utils.MD5("com.ejctu.flesh:mnsync@outlook.com"));
+        TestDES td = new TestDES(MD5Utils.MD5("com.ecjtu.flesh:mnsync@outlook.com"));
         try (ObjectInputStream os = new ObjectInputStream(new FileInputStream("res\\key"))) {
             Key key = (Key) os.readObject();
             if (key != null) {

@@ -31,7 +31,6 @@ public class CrawlV33 {
             e.printStackTrace();
 
 
-
         }
 
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(new File(".\\res\\v33a")))) {
@@ -84,7 +83,7 @@ public class CrawlV33 {
         int count = 0;
         for (String url : urls) {
             try {
-                if (count++ > 10) {
+                if (count++ > 88) {
                     count = 0;
                     releaseWebClient(webClient, page);
                     webClient = createWebClient();
