@@ -30,11 +30,11 @@ public class ListBucketsObject {
             }
             System.out.println("");
 
-            // 设置资源为所有用户均能访问
-            controlList.revokeAllPermissions(GroupGrantee.AllUsers);
-//            controlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
-            s3.setObjectAcl(objectSummary.getBucketName(), objectSummary.getKey(),
-                    controlList);
+//            // 设置资源为所有用户均能访问
+//            controlList.revokeAllPermissions(GroupGrantee.AllUsers);
+////            controlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+//            s3.setObjectAcl(objectSummary.getBucketName(), objectSummary.getKey(),
+//                    controlList);
         }
     }
 }

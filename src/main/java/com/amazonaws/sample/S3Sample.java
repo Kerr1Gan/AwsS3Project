@@ -111,7 +111,7 @@ public class S3Sample {
             S3Object object = s3.getObject(new GetObjectRequest(bucketName, key));
             System.out.println("Content-Type: " + object.getObjectMetadata().getContentType());
             displayTextInputStream(object.getObjectContent());
-
+            object.getObjectContent().getHttpRequest();
             /*
              * List objects in your bucket by prefix - There are many options for
              * listing the objects in your bucket.  Keep in mind that buckets with
