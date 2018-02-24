@@ -1,6 +1,8 @@
 package org.ecjtu.selenium.ofo91;
 
-public class OfO91Model {
+import java.io.Serializable;
+
+public class OfO91Model implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
