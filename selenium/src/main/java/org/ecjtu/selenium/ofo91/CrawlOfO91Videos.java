@@ -46,11 +46,11 @@ public class CrawlOfO91Videos {
                     JSONArray oldArr = (JSONArray) oldObj.get("array");
                     for (int j = 0; j < oldArr.length(); j++) {
                         JSONObject obj = oldArr.getJSONObject(j);
-                        String videoUrl = obj.optString("videoUrl");
+                        String imageUrl = obj.optString("imageUrl");
                         String innerVideoUrl = obj.optString("innerVideoUrl");
-                        if (videoUrl != null && innerVideoUrl != null && !videoUrl.equals("") && !innerVideoUrl.equals("")) {
+                        if (imageUrl != null && innerVideoUrl != null && !imageUrl.equals("") && !innerVideoUrl.equals("")) {
                             String[] cacheItem = new String[2];
-                            cacheItem[0] = videoUrl;
+                            cacheItem[0] = imageUrl;
                             cacheItem[1] = innerVideoUrl;
                             cache.add(cacheItem);
                         }
@@ -76,12 +76,11 @@ public class CrawlOfO91Videos {
                             try {
                                 //load from cache
                                 for (String[] item : cache) {
-                                    if (item[0].equals(model.getVideoUrl())) {
+                                    if (item[0].equals(model.getImageUrl())) {
                                         model.setInnerVideoUrl(item[1]);
                                         break inner;
                                     }
                                 }
-
 
                                 // get the inner video url
                                 driver.get(model.getVideoUrl());
