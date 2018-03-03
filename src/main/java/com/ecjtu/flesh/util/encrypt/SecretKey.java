@@ -32,12 +32,12 @@ public class SecretKey implements Serializable {
     }
 
     public static void main(String[] args) {
-        TestDES td = new TestDES(MD5Utils.MD5("com.ecjtu.flesh:mnsync@outlook.com"));
-        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("res\\key"))) {
-            SecretKey key = new SecretKey();
-            key.setKey(td.key);
-            os.writeObject(key);
-        } catch (Exception e) {
-        }
+//        TestDES td = new TestDES(MD5Utils.MD5("com.ejctu.flesh:mnsync@outlook.com"));
+//        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("res\\key"))) {
+//            SecretKey key = new SecretKey();
+//            key.setKey(td.key);
+//            os.writeObject(key);
+//        } catch (Exception e) {
+//        }
     }
 }

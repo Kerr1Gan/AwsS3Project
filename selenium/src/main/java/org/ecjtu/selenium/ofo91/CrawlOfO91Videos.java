@@ -105,6 +105,7 @@ public class CrawlOfO91Videos {
                 }
             }
         }
+        System.out.println("system exit");
         if (driver != null) {
             driver.quit();
         }
