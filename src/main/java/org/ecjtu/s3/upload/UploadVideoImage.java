@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.io.File;
 
@@ -26,24 +27,21 @@ public class UploadVideoImage {
         s3.setRegion(usWest2);
         s3.setEndpoint("s3.ap-northeast-2.amazonaws.com");
 
+        ObjectListing objectListing = s3.listObjects(new ListObjectsRequest()
+                .withBucketName("fleshbucketimage"));
         File file = new File("res\\videoImage");
         File[] fileList = file.listFiles();
         if (fileList != null) {
+            loop:
             for (int i = 0; i < fileList.length; i++) {
                 File f = fileList[i];
                 String name = f.getName();
                 String key = String.format(S3_IMAGE_FORMAT, BUCKET_NAME, name);
-                boolean flag = false;
-                try {
-                    s3.getObject(BUCKET_NAME, key);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    flag = true;
+                for (S3ObjectSummary summary : objectListing.getObjectSummaries()) {
+                    if (summary.getKey().equals(key)) {
+                        continue loop;
+                    }
                 }
-                if (!flag) {
-                    continue;
-                }
-
                 try {
                     s3.putObject(BUCKET_NAME, key, f);
                 } catch (Exception e) {
