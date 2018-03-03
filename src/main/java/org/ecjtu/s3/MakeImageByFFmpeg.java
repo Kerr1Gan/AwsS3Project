@@ -11,7 +11,6 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MakeImageByFFmpeg {
 
