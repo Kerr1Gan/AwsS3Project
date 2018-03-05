@@ -35,14 +35,15 @@ public class UploadVideoImage {
             loop:
             for (int i = 0; i < fileList.length; i++) {
                 File f = fileList[i];
-                String name = f.getName();
-                String key = String.format(S3_IMAGE_FORMAT, BUCKET_NAME, name);
+                System.out.println("file name "+f.getName());
+                String key = f.getName();
                 for (S3ObjectSummary summary : objectListing.getObjectSummaries()) {
                     if (summary.getKey().equals(key)) {
                         continue loop;
                     }
                 }
                 try {
+                    System.out.println("upload file  "+f.getName());
                     s3.putObject(BUCKET_NAME, key, f);
                 } catch (Exception e) {
                     e.printStackTrace();

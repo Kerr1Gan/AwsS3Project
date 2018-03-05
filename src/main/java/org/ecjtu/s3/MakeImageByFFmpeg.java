@@ -14,12 +14,14 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.io.*;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class MakeImageByFFmpeg {
 
     private static final String FFMPEG_PATH = "C:\\Users\\KerriGan\\Desktop\\ffmpeg-20170821-d826951-win64-static\\ffmpeg-20170821-d826951-win64-static\\bin\\ffmpeg.exe";
-
+    private static final String BUCKET_NAME = "xkorean";
+    private static final String KEY_FORMAT = "%s_image_%s.png";
     public static void main(String[] args) {
         ClientConfiguration configuration = new ClientConfiguration();
         configuration.setProtocol(Protocol.HTTP);
@@ -28,7 +30,7 @@ public class MakeImageByFFmpeg {
         s3.setRegion(usWest2);
         s3.setEndpoint("s3.ap-northeast-2.amazonaws.com");
         ObjectListing objectListing = s3.listObjects(new ListObjectsRequest()
-                .withBucketName("firststorage0001"));
+                .withBucketName(BUCKET_NAME));
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.HOUR, 1);
         File file = new File("res\\videoImage");
@@ -39,15 +41,26 @@ public class MakeImageByFFmpeg {
         for (int i = 0; i < summaryList.size(); i++) {
             S3ObjectSummary objectSummary = summaryList.get(i);
             System.out.println(" - " + objectSummary.getKey());
-            if (s3.getObject("firststorage0001", objectSummary.getKey()) != null) {
+//            boolean flag =false;
+//            try {
+//                s3.getObject("fleshbucketimage", objectSummary.getKey());
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                flag = true;
+//            }
+//            if(!flag){
+//                continue;
+//            }
+            String key = String.format(KEY_FORMAT,BUCKET_NAME,objectSummary.getKey());
+            File image = new File("res\\videoImage\\" + key);
+            if(image.exists()){
                 continue;
             }
-            String url = s3.generatePresignedUrl("firststorage0001", objectSummary.getKey(), endDate.getTime()).toString();
-            String key = "image_" + objectSummary.getKey();
+            String url = s3.generatePresignedUrl(BUCKET_NAME, objectSummary.getKey(), endDate.getTime()).toString();
             Process process = null;
             BufferedReader reader = null;
             ProcessBuilder builder = new ProcessBuilder();
-            String[] argument = new String[]{FFMPEG_PATH, "-y", "-ss", "300", "-t", "5", "-i", "\"" + url + "\"", "-f", "image2", "-s", "320x240", "res\\videoImage\\" + key + ".png"};
+            String[] argument = new String[]{FFMPEG_PATH, "-y"/*, "-ss", "300"*//*, "-t", "20"*/, "-i", "\"" + url + "\"", "-f", "image2", "-s", "320x240", "res\\videoImage\\" + key };
             try {
                 String str = "";
                 for (String c : argument) {
