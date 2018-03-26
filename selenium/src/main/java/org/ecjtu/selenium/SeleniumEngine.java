@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("Duplicates")
 public class SeleniumEngine {
 
     public static final String DRIVE_PATH;
@@ -91,20 +92,44 @@ public class SeleniumEngine {
     }
 
     public ChromeDriver newMobileDriver() {
+//        Map<String, String> mobileEmulation = new HashMap<>();
+//        //设置设备,例如:Google Nexus 7/Apple iPhone 6
+//        //mobileEmulation.put("deviceName", "Google Nexus 7");
+//        mobileEmulation.put("deviceName", "Nexus 6P");
+//        Map<String, Object> chromeOptions = new HashMap<>();
+//        chromeOptions.put("mobileEmulation", mobileEmulation);
+//        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+//        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        return newMobileDriver(true);
+    }
+
+    public ChromeDriver newMobileDriver(boolean showImage) {
+        ChromeOptions options = new ChromeOptions();
         Map<String, String> mobileEmulation = new HashMap<>();
         //设置设备,例如:Google Nexus 7/Apple iPhone 6
         //mobileEmulation.put("deviceName", "Google Nexus 7");
         mobileEmulation.put("deviceName", "Nexus 6P");
-        Map<String, Object> chromeOptions = new HashMap<>();
-        chromeOptions.put("mobileEmulation", mobileEmulation);
-        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-        return new ChromeDriver(capabilities);
+        options.setExperimentalOption("mobileEmulation", mobileEmulation);
+        if (!showImage) {
+            Map<String, Object> prefs = new HashMap<String, Object>();
+            prefs.put("profile.managed_default_content_settings.images", 2);
+            options.setExperimentalOption("prefs", prefs);
+        }
+        return new ChromeDriver(options);
     }
 
     public ChromeDriver newDesktopChromeDriver() {
-        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        return new ChromeDriver(capabilities);
+        return newDesktopChromeDriver(true);
+    }
+
+    public ChromeDriver newDesktopChromeDriver(boolean showImage) {
+        ChromeOptions options = new ChromeOptions();
+        if (!showImage) {
+            Map<String, Object> prefs = new HashMap<String, Object>();
+            prefs.put("profile.managed_default_content_settings.images", 2);
+            options.setExperimentalOption("prefs", prefs);
+        }
+        return new ChromeDriver(options);
     }
 
     public void openNewTabJs(ChromeDriver webDriver, String url) {

@@ -65,7 +65,7 @@ public class CrawlOfO91Videos {
         if (map != null) {
             Set<Map.Entry<String, List<OfO91Model>>> entrySet = map.entrySet();
             SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-            driver = SeleniumEngine.getInstance().newDesktopChromeDriver();
+            driver = SeleniumEngine.getInstance().newDesktopChromeDriver(false);
             loop:
             for (Map.Entry<String, List<OfO91Model>> entry : entrySet) {
                 List<OfO91Model> ofoList = entry.getValue();
