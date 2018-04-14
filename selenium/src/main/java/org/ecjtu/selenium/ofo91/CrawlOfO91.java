@@ -17,7 +17,7 @@ public class CrawlOfO91 {
 
     public static void main(String[] args) {
         SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
-        ChromeDriver chromeDriver = SeleniumEngine.getInstance().newDesktopChromeDriver();
+        ChromeDriver chromeDriver = SeleniumEngine.getInstance().newDesktopChromeDriver(false);
         Map<String, List<OfO91Model>> map = new LinkedHashMap<>();
         try {
             WebElement menu = null;
@@ -128,7 +128,7 @@ public class CrawlOfO91 {
             e.printStackTrace();
         } finally {
             System.out.println("system exit");
-            chromeDriver.close();
+            chromeDriver.quit();
         }
     }
 }
