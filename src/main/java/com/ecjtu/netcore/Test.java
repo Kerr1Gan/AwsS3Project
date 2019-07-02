@@ -18,10 +18,9 @@ public class Test {
         request.request("https://www.meitulu.com/", null);
         request.setRequestCallback(new IRequestCallback() {
             @Override
-            public void onSuccess(HttpURLConnection httpURLConnection, String response) {
-                byte[] unzip = uncompress(response.getBytes());
+            public void onSuccess(HttpURLConnection httpURLConnection, String response, byte[] bytes) {
                 try {
-                    System.out.println(new String(unzip,"utf-8"));
+                    System.out.println(new String(uncompress(bytes), "utf-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

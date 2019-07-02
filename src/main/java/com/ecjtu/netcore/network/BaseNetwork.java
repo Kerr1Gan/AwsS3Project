@@ -1,8 +1,6 @@
 package com.ecjtu.netcore.network;
 
 
-import com.ecjtu.netcore.Test;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
@@ -61,7 +59,7 @@ public abstract class BaseNetwork {
     public BaseNetwork request(String urlStr, Map<String, String> mutableMap) {
         Exception ex = null;
 
-        String ret = "";
+        byte[] ret = null;
         try {
             mUrl = urlStr;
             URL url = new URL(mUrl);
@@ -76,11 +74,17 @@ public abstract class BaseNetwork {
             ex = e;
         } finally {
             if (ex != null && mCallback instanceof IRequestCallbackV2) {
-                if (mCallback != null) {
-                    ((IRequestCallbackV2) mCallback).onError(mHttpUrlConnection, ex);
-                }
+                ((IRequestCallbackV2) mCallback).onError(mHttpUrlConnection, ex);
             } else {
-                mCallback.onSuccess(mHttpUrlConnection, ret);
+                String str = "";
+                try {
+                    if (ret != null) {
+                        str = new String(ret, "utf-8");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mCallback.onSuccess(mHttpUrlConnection, str, ret);
             }
             mHttpUrlConnection.disconnect();
         }
@@ -151,8 +155,8 @@ public abstract class BaseNetwork {
         }
     }
 
-    protected String getContent(HttpURLConnection httpURLConnection) throws IOException {
-        String ret = "";
+    protected byte[] getContent(HttpURLConnection httpURLConnection) throws IOException {
+        byte[] ret = null;
         ByteArrayOutputStream os = null;
         try {
             os = new ByteArrayOutputStream();
@@ -165,8 +169,7 @@ public abstract class BaseNetwork {
                 os.write(temp, 0, len);
                 len = is.read(temp);
             }
-            Test.uncompress(os.toByteArray());
-            ret = new String(os.toByteArray(), charset);
+            ret = os.toByteArray();
             os.close();
         } catch (Exception ex) {
             if (mInputStream != null) {

@@ -66,6 +66,8 @@ public class CrawlOfO91Videos {
             Set<Map.Entry<String, List<OfO91Model>>> entrySet = map.entrySet();
             SeleniumEngine.initEngine(SeleniumEngine.DRIVE_PATH);
             driver = SeleniumEngine.getInstance().newDesktopChromeDriver(false);
+            List<String> downloadList = new ArrayList<>();
+            int downloadIndex = 0;
             loop:
             for (Map.Entry<String, List<OfO91Model>> entry : entrySet) {
                 List<OfO91Model> ofoList = entry.getValue();
@@ -86,6 +88,26 @@ public class CrawlOfO91Videos {
                                 driver.get(model.getVideoUrl());
                                 String innerVideoUrl = driver.findElement(By.id("playerv")).getAttribute("src");
                                 model.setInnerVideoUrl(innerVideoUrl);
+                                downloadList.add(innerVideoUrl);
+                                if (downloadList.size() >= 10) {
+                                    for (String url : downloadList) {
+                                        String path;
+                                        while (true) {
+                                            path = "res\\ofo\\download" + downloadIndex++ + ".txt";
+                                            File file = new File(path);
+                                            if (file.exists()) {
+                                                continue;
+                                            }
+                                            break;
+                                        }
+                                        try (BufferedWriter writer = new BufferedWriter(
+                                                new FileWriter(path))) {
+                                            writer.write(url);
+                                            writer.write("\n");
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                }
                             } catch (NoSuchWindowException e) {
                                 break loop;
                             } catch (Exception e) {
